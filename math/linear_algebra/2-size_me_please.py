@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Size me up"""
 def matrix_shape(matrix):
     shape = []
 
