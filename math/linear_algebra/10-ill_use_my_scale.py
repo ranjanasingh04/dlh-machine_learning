@@ -3,4 +3,5 @@
 
 
 def np_shape(matrix):
+    """ Matrxi shape"""
     return matrix.shape
