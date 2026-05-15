@@ -2,7 +2,6 @@
 """ Bracing The Elements"""
 
 
-
 def np_elementwise(mat1, mat2):
     """ Elementwise """
     return (mat1 + mat2,
