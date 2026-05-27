@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Module that calculates the definiteness of a matrix."""
 
+import numpy as np
+
 
 def definiteness(matrix):
     """
@@ -14,7 +16,6 @@ def definiteness(matrix):
         - Indefinite
         - None
     """
-    import numpy as np
 
     # Check if matrix is numpy.ndarray
     if not isinstance(matrix, np.ndarray):
