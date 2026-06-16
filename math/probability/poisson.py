@@ -3,6 +3,8 @@
 
 
 class Poisson:
+    """Represents a Poisson distribution"""
+
     def __init__(self, data=None, lambtha=1):
         """Initialize Poisson distribution"""
         if data is None:
