@@ -26,4 +26,3 @@ def hierarchy(df1, df2):
     df = df.sort_index()
 
     return df
-    
