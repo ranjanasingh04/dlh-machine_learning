@@ -3,6 +3,7 @@
 This module contains the function high.
 """
 
+
 def high(df):
     """
     Sort the DataFrame by the High column in descending order.
