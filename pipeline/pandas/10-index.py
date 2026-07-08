@@ -3,6 +3,7 @@
 This module contains the function index.
 """
 
+
 def index(df):
     """
     Set the Timestamp column as the DataFrame index.
