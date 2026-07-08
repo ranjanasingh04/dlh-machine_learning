@@ -1,19 +1,12 @@
 #!/usr/bin/env python3
 """
-This module create a function array(df)
-that takes a pd.DataFrame
-Returns: the numpy.ndarray
+This module contains the function array.
 """
-
-import pandas as pd
-
 
 def array(df):
     """
-    function should select the last 10 rows of the High and Close columns.
-    Convert these selected values into a numpy.ndarray.
+    Select the last 10 rows of the High and Close columns
+    and return them as a NumPy array.
     """
-    columns = [{
-        "High", "Low"
-    }]
-    return df[["High", "Low"]].tail(10).to_numpy()
+    return df[["High", "Close"]].tail(10).to_numpy()
+    
