@@ -1,38 +1,92 @@
 #!/usr/bin/env python3
+"""
+Visualize Bitcoin trading data at daily intervals.
+
+The script cleans the Coinbase dataset, converts Unix timestamps to
+datetime values, fills missing values, groups the data by day, and
+plots the transformed DataFrame.
+"""
 
 import matplotlib.pyplot as plt
 import pandas as pd
+
 from_file = __import__('2-from_file').from_file
 
-df = from_file('coinbaseUSD_1-min_data_2014-12-01_to_2019-01-09.csv', ',')
 
-df = df.drop(columns=["Weighted_Price"])
+def visualize(df):
+    """
+    Clean, transform, resample, and visualize Bitcoin trading data.
 
-df = df.rename(columns={"Timestamp": "Date"})
+    The function:
+        - Removes the Weighted_Price column.
+        - Renames Timestamp to Date.
+        - Converts Unix timestamps to datetime values.
+        - Sets Date as the DataFrame index.
+        - Fills missing Close values using forward fill.
+        - Fills missing High, Low, and Open values using Close.
+        - Fills missing volume values with 0.
+        - Keeps data from 2017 onwards.
+        - Groups the data into daily intervals.
+        - Plots the transformed data.
 
-df["Date"] = pd.to_datetime(df["Date"], unit="s")
+    Args:
+        df (pd.DataFrame): DataFrame containing Bitcoin trading data.
 
-df = df.set_index("Date")
+    Returns:
+        pd.DataFrame: Cleaned and daily-resampled DataFrame.
+    """
+    # Remove the Weighted_Price column
+    df = df.drop(columns=["Weighted_Price"])
 
-df["Close"] = df["Close"].ffill()
+    # Rename Timestamp to Date
+    df = df.rename(columns={"Timestamp": "Date"})
 
-df["High"] = df["High"].fillna(df["Close"])
-df["Low"] = df["Low"].fillna(df["Close"])
-df["Open"] = df["Open"].fillna(df["Close"])
+    # Convert Unix timestamps, measured in seconds, to datetime values
+    df["Date"] = pd.to_datetime(df["Date"], unit="s")
 
-df["Volume_(BTC)"] = df["Volume_(BTC)"].fillna(0)
-df["Volume_(Currency)"] = df["Volume_(Currency)"].fillna(0)
+    # Set Date as the DataFrame index
+    df = df.set_index("Date")
 
-df = df.loc["2017":]
+    # Fill missing Close values with the previous valid value
+    df["Close"] = df["Close"].ffill()
 
-df = df.resample("D").agg({
-    "High": "max",
-    "Low": "min",
-    "Open": "mean",
-    "Close": "mean",
-    "Volume_(BTC)": "sum",
-    "Volume_(Currency)": "sum"
-})
+    # Fill missing High, Low, and Open values with Close
+    for column in ["High", "Low", "Open"]:
+        df[column] = df[column].fillna(df["Close"])
 
-df.plot()
-plt.show()
+    # Fill missing volume values with zero
+    volume_columns = ["Volume_(BTC)", "Volume_(Currency)"]
+    df[volume_columns] = df[volume_columns].fillna(0)
+
+    # Keep data from 2017 onwards
+    df = df.loc["2017-01-01":]
+
+    # Group values into daily intervals
+    aggregation = {
+        "High": "max",
+        "Low": "min",
+        "Open": "mean",
+        "Close": "mean",
+        "Volume_(BTC)": "sum",
+        "Volume_(Currency)": "sum"
+    }
+
+    df = df.resample("D").agg(aggregation)
+
+    # Plot the transformed DataFrame
+    df.plot(figsize=(12, 8))
+    plt.title("Daily Bitcoin Trading Data from 2017")
+    plt.xlabel("Date")
+    plt.ylabel("Value")
+    plt.tight_layout()
+    plt.show()
+
+    return df
+
+
+df = from_file(
+    "coinbaseUSD_1-min_data_2014-12-01_to_2019-01-09.csv",
+    ","
+)
+
+transformed_df = visualize(df)
